@@ -30,22 +30,22 @@ class BonnerSphereTools(object):
         
         return ibuString
     
-    def responseFunctions(self, rfErgEdges, responses, ergUnits='MeV'):
+    def responseFunctions(self, rfErgEdges, responses, rfErgUnits='MeV'):
         self.rfErgEdges = rfErgEdges
         self.responses = responses
-        self.ergUnits = ergUnits
+        self.rfErgUnits = rfErgUnits
         
         
         
-        if self.ergUnits == 'eV' : self.ieu = 0
-        if self.ergUnits == 'MeV' : self.ieu = 1
-        if self.ergUnits == 'KeV' : self.ieu = 2
+        if self.rfErgUnits == 'eV' : self.rfIEU = 0
+        if self.rfErgUnits == 'MeV' : self.rfIEU = 1
+        if self.rfErgUnits == 'KeV' : self.rfIEU = 2
         
         
         
         fmtString  = 'Response Function file for Bonner Spheres\n'
         fmtString += 'Contains {} spheres and {} energy groups using units of {}\n'.format(len(self.sphereIDs), len(self.rfErgEdges), self.ergUnits)
-        fmtString += '  {}  {}\n'.format(len(self.rfErgEdges), self.ieu)
+        fmtString += '  {}  {}\n'.format(len(self.rfErgEdges), self.rfIEU)
         
         for i, erg in enumerate(self.rfErgEdges):
             fmtString += '{:4.3e} '.format(erg)
@@ -78,8 +78,43 @@ class BonnerSphereTools(object):
         
         return fmtString
     
-    def defaultSpectrum(self, ):
-        pass
+    def defaultSpectrum(self, dsErgEdges, defaultSpectrum, defaultSpectrumError, mode=1, dsErgUnits='MeV'):
+        self.mode = mode
+        self.dsErgUnits = dsErgUnits
+        self.dS = defaultSpectrum
+        self.dsErr = defaultSpectrumError
+        self.dsErgEdges = dsErgEdges
+        
+        
+        
+        if self.dsErgUnits == 'eV' : self.dsIEU = 0
+        if self.dsErgUnits == 'MeV' : self.dsIEU = 1
+        if self.dsErgUnits == 'KeV' : self.dsIEU = 2
+        
+        
+        fluString  = 'Default Spectrum for Bonner Sphere Unfolding\n'
+        fluString += '   {}   {}\n'.format(self.mode, self.dsIEU)
+        fluString += '       2         {}        {}       {:4.3e}\n'.format(len(self.dS), len(self.dS), max(self.dsErgEdges))
+        for i, value in enumerate(self.dS):
+            fluString += '{:4.3e}  {:4.3e}  {:4.3e}\n'.format(self.dsErgEdges[i], value, self.dsErr[i])
+        return fluString
     
     def controlFile(self, ):
         pass
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
