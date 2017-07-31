@@ -10,7 +10,30 @@ import matplotlib.pyplot as plt
 
 class BonnerSphereTools(object):
     def __init__(self):
-        pass
+        self.sphereIDs = None
+        self.sphereSizes = None
+        self.responseData = None
+        self.responseError = None
+        self.extraError = None
+        self.numOfSpheres = None
+        self.correctionFactor = None
+        self.rfErgEdges = None
+        self.responses = None
+        self.rfErgUnits = None
+        self.mode = None
+        self.dsErgUnits = None
+        self.dS = None
+        self.dsErr = None
+        self.dsErgEdges = None
+        self.ibuName = None
+        self.fmtName = None
+        self.fluName = None
+        self.outName = None
+        self.finalChiSqr = None
+        self.temp =  None
+        self.solnStructure = None
+        self.solnRepresentation = None
+        self.scaling = None
     
     
     def measuredData(self, sphereIDs, sphereSizes, responseData, responseError, extraError, correctFactor=0):
@@ -121,20 +144,3 @@ class BonnerSphereTools(object):
         inpString += '{}, {}   \n'.format(self.solnStructure, self.solnRepresentation)
         inpString += '{}   \n{}   \n{}\n'.format(self.scaling[0], self.scaling[1], self.scaling[2])
         return inpString
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
