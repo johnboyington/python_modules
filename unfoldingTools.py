@@ -99,8 +99,28 @@ class BonnerSphereTools(object):
             fluString += '{:4.3e}  {:4.3e}  {:4.3e}\n'.format(self.dsErgEdges[i], value, self.dsErr[i])
         return fluString
     
-    def controlFile(self, ):
-        pass
+    def controlFile(self, ibuName, fmtName, fluName, outName, finalChiSqr, temp=[1.0, 0.85], solnStructure=2, solnRepresentation=1, scaling):
+        self.ibuName = ibuName
+        self.fmtName = fmtName
+        self.fluName = fluName
+        self.outName = outName
+        self.finalChiSqr = finalChiSqr
+        self.temp = temp
+        self.solnStructure = solnStructure
+        self.solnRepresentation = solnRepresentation
+        self.scaling = scaling
+        
+        
+        inpString  = '{}   \n'.format(self.ibuName)
+        inpString += '{}   \n'.format(self.fmtName)
+        inpString += '{}   \n'.format(self.outName)
+        inpString += '{}   \n'.format(self.fluName)
+        inpString += '{}   \n'.format(max(self.rfErgEdges))
+        inpString += '{}   \n'.format(self.finalChiSqr)
+        inpString += '{}, {}   \n'.format(self.temp[0], self.temp[1])
+        inpString += '{}, {}   \n'.format(self.solnStructure, self.solnRepresentation)
+        inpString += '{}   \n{}   \n{}\n'.format(self.scaling[0], self.scaling[1], self.scaling[2])
+        return inpString
 
 
 
