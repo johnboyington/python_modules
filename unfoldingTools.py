@@ -15,13 +15,13 @@ class BonnerSphereTools(object):
         self.responseData = None
         self.responseError = None
         self.extraError = None
-        self.numOfSpheres = None
-        self.correctionFactor = None
+        self.numOfSpheres = len(sphereSizes)
+        self.correctionFactor = 0
         self.rfErgEdges = None
         self.responses = None
-        self.rfErgUnits = None
-        self.mode = None
-        self.dsErgUnits = None
+        self.rfErgUnits = 'MeV'
+        self.mode = 1
+        self.dsErgUnits = 'MeV'
         self.dS = None
         self.dsErr = None
         self.dsErgEdges = None
@@ -30,20 +30,13 @@ class BonnerSphereTools(object):
         self.fluName = None
         self.outName = None
         self.finalChiSqr = None
-        self.temp =  None
-        self.solnStructure = None
-        self.solnRepresentation = None
+        self.temp =  [1.0, 0.85]
+        self.solnStructure = 2
+        self.solnRepresentation = 1
         self.scaling = None
     
     
-    def measuredData(self, sphereIDs, sphereSizes, responseData, responseError, extraError, correctFactor=0):
-        self.sphereIDs = sphereIDs
-        self.sphereSizes = sphereSizes
-        self.responseData = responseData
-        self.responseError = responseError
-        self.extraError = extraError
-        self.numOfSpheres = len(sphereSizes)
-        self.correctionFactor = correctFactor
+    def writeMeasuredData(self):
         
         ibuString  = 'Input file for Bonner Spheres\n'
         ibuString += '   {}   {}\n'.format(self.numOfSpheres, self.correctionFactor)
@@ -53,19 +46,10 @@ class BonnerSphereTools(object):
         
         return ibuString
     
-    def responseFunctions(self, rfErgEdges, responses, rfErgUnits='MeV'):
-        self.rfErgEdges = rfErgEdges
-        self.responses = responses
-        self.rfErgUnits = rfErgUnits
-        
-        
-        
+    def writeResponseFunctions(self):
         if self.rfErgUnits == 'eV' : self.rfIEU = 0
         if self.rfErgUnits == 'MeV' : self.rfIEU = 1
         if self.rfErgUnits == 'KeV' : self.rfIEU = 2
-        
-        
-        
         fmtString  = 'Response Function file for Bonner Spheres\n'
         fmtString += 'Contains {} spheres and {} energy groups using units of {}\n'.format(len(self.sphereIDs), len(self.rfErgEdges), self.ergUnits)
         fmtString += '  {}  {}\n'.format(len(self.rfErgEdges), self.rfIEU)
@@ -101,39 +85,19 @@ class BonnerSphereTools(object):
         
         return fmtString
     
-    def defaultSpectrum(self, dsErgEdges, defaultSpectrum, defaultSpectrumError, mode=1, dsErgUnits='MeV'):
-        self.mode = mode
-        self.dsErgUnits = dsErgUnits
-        self.dS = defaultSpectrum
-        self.dsErr = defaultSpectrumError
-        self.dsErgEdges = dsErgEdges
-        
-        
-        
+    def defaultSpectrum(self):
         if self.dsErgUnits == 'eV' : self.dsIEU = 0
         if self.dsErgUnits == 'MeV' : self.dsIEU = 1
         if self.dsErgUnits == 'KeV' : self.dsIEU = 2
-        
-        
         fluString  = 'Default Spectrum for Bonner Sphere Unfolding\n'
         fluString += '   {}   {}\n'.format(self.mode, self.dsIEU)
         fluString += '       2         {}        {}       {:4.3e}\n'.format(len(self.dS), len(self.dS), max(self.dsErgEdges))
         for i, value in enumerate(self.dS):
             fluString += '{:4.3e}  {:4.3e}  {:4.3e}\n'.format(self.dsErgEdges[i], value, self.dsErr[i])
         return fluString
+
     
-    def controlFile(self, ibuName, fmtName, fluName, outName, finalChiSqr, temp=[1.0, 0.85], solnStructure=2, solnRepresentation=1, scaling):
-        self.ibuName = ibuName
-        self.fmtName = fmtName
-        self.fluName = fluName
-        self.outName = outName
-        self.finalChiSqr = finalChiSqr
-        self.temp = temp
-        self.solnStructure = solnStructure
-        self.solnRepresentation = solnRepresentation
-        self.scaling = scaling
-        
-        
+    def controlFile(self):
         inpString  = '{}   \n'.format(self.ibuName)
         inpString += '{}   \n'.format(self.fmtName)
         inpString += '{}   \n'.format(self.outName)
