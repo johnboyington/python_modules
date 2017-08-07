@@ -15,7 +15,6 @@ class BonnerSphereTools(object):
         self.responseData = None
         self.responseError = None
         self.extraError = None
-        self.numOfSpheres = len(sphereSizes)
         self.correctionFactor = 0
         self.rfErgEdges = None
         self.responses = None
@@ -39,7 +38,7 @@ class BonnerSphereTools(object):
     def writeMeasuredData(self):
         
         ibuString  = 'Input file for Bonner Spheres\n'
-        ibuString += '   {}   {}\n'.format(self.numOfSpheres, self.correctionFactor)
+        ibuString += '   {}   {}\n'.format(len(self.sphereSizes), self.correctionFactor)
         for i, names in enumerate(self.sphereIDs):
             ibuString += '{}   {}   {}   {}   {}   {}   {}\n'.format(self.sphereIDs[i][0], self.sphereSizes[i], self.responseData[i], self.responseData[i] * self.responseError[i], self.responseError[i], self.extraError[i], i)
         ibuString += '\n'
@@ -49,7 +48,7 @@ class BonnerSphereTools(object):
     def writeResponseFunctions(self):
         if self.rfErgUnits == 'eV' : self.rfIEU = 0
         if self.rfErgUnits == 'MeV' : self.rfIEU = 1
-        if self.rfErgUnits == 'KeV' : self.rfIEU = 2
+        if self.rfErgUnits == 'keV' : self.rfIEU = 2
         fmtString  = 'Response Function file for Bonner Spheres\n'
         fmtString += 'Contains {} spheres and {} energy groups using units of {}\n'.format(len(self.sphereIDs), len(self.rfErgEdges), self.ergUnits)
         fmtString += '  {}  {}\n'.format(len(self.rfErgEdges), self.rfIEU)
@@ -65,7 +64,7 @@ class BonnerSphereTools(object):
             fmtString += '\n'
         
         fmtString += '   0   \n'
-        fmtString += '   {}   \n'.format(len(self.numOfSpheres))
+        fmtString += '   {}   \n'.format(len(self.sphereSizes))
         
         for i, names in enumerate(self.sphereIDs):
             fmtString += '{}  {}\n'.format(names[0], names[1])
@@ -85,10 +84,10 @@ class BonnerSphereTools(object):
         
         return fmtString
     
-    def defaultSpectrum(self):
+    def writeDefaultSpectrum(self):
         if self.dsErgUnits == 'eV' : self.dsIEU = 0
         if self.dsErgUnits == 'MeV' : self.dsIEU = 1
-        if self.dsErgUnits == 'KeV' : self.dsIEU = 2
+        if self.dsErgUnits == 'keV' : self.dsIEU = 2
         fluString  = 'Default Spectrum for Bonner Sphere Unfolding\n'
         fluString += '   {}   {}\n'.format(self.mode, self.dsIEU)
         fluString += '       2         {}        {}       {:4.3e}\n'.format(len(self.dS), len(self.dS), max(self.dsErgEdges))
@@ -97,7 +96,7 @@ class BonnerSphereTools(object):
         return fluString
 
     
-    def controlFile(self):
+    def writeControlFile(self):
         inpString  = '{}   \n'.format(self.ibuName)
         inpString += '{}   \n'.format(self.fmtName)
         inpString += '{}   \n'.format(self.outName)
@@ -108,3 +107,9 @@ class BonnerSphereTools(object):
         inpString += '{}, {}   \n'.format(self.solnStructure, self.solnRepresentation)
         inpString += '{}   \n{}   \n{}\n'.format(self.scaling[0], self.scaling[1], self.scaling[2])
         return inpString
+    
+    def writeMaxedFiles(self):
+        self.writeMeasuredData()
+        self.writeResponseFunctions()
+        self.writeDefaultSpectrum()
+        self.writeControlFile()
