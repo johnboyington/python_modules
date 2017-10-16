@@ -138,7 +138,7 @@ class BonnerSphereTools(object):
             os.mkdir('out')
         except:
             pass
-        time.sleep(10)
+        time.sleep(5)
         os.rename('inp/{}.txt'.format(self.outName), 'out/{}.txt'.format(self.outName))
         os.rename('inp/{}.par'.format(self.outName), 'out/{}.par'.format(self.outName))
         os.rename('inp/{}.plo'.format(self.outName), 'out/{}.plo'.format(self.outName))
