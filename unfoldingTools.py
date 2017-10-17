@@ -38,12 +38,18 @@ class BonnerSphereTools(object):
         self.scaling = [0, 1, 1]
         self.solData = None
         self.solutions = []
+        self.routine = 'maxed'
 
     def makeStep(self, x, y):
         # assert len(x) - 1== len(y)
         Y = np.array([[yy, yy] for yy in np.array(y)]).flatten()
         X = np.array([[xx, xx] for xx in np.array(x)]).flatten()[1:-1]
         return X, Y
+    
+    def getExe(self):
+        if self.routine == 'maxed': return '/home/john/opt/U_M_G/FC/bin/MXD_FC33.exe'
+        elif self.routine == 'gravel': return '/home/john/opt/U_M_G/FC/bin/GRV_FC33.exe'
+        else: print('NOT A VALID ROUTINE')
 
     def writeMeasuredData(self):
         ibuString  = 'Measured Responses for Bonner Spheres\n'
@@ -120,7 +126,7 @@ class BonnerSphereTools(object):
             F.write(inpString)
         return
 
-    def writeMaxedFiles(self):
+    def writeInputFiles(self):
         try:
             os.mkdir('inp')
         except:
@@ -130,9 +136,10 @@ class BonnerSphereTools(object):
         self.writeDefaultSpectrum()
         self.writeControlFile()
 
-    def runMaxed(self):
+    def unfold(self):
+        self.exe = self.getExe()
         os.chdir('inp')
-        os.system('wine /home/john/opt/U_M_G/FC/bin/MXD_FC33.exe {}.inp'.format(self.inpName))
+        os.system('wine {} {}.inp'.format(self.exe, self.inpName))
         os.chdir('..')
         try:
             os.mkdir('out')
@@ -140,12 +147,18 @@ class BonnerSphereTools(object):
             pass
         time.sleep(5)
         os.rename('inp/{}.txt'.format(self.outName), 'out/{}.txt'.format(self.outName))
-        os.rename('inp/{}.par'.format(self.outName), 'out/{}.par'.format(self.outName))
+        if self.routine == 'maxed':
+            os.rename('inp/{}.par'.format(self.outName), 'out/{}.par'.format(self.outName))
         os.rename('inp/{}.plo'.format(self.outName), 'out/{}.plo'.format(self.outName))
         os.rename('inp/{}.flu'.format(self.outName), 'out/{}.flu'.format(self.outName))
 
     def storeResult(self, label):
         self.solutions.append((label, np.loadtxt('out/{}.flu'.format(self.outName), skiprows=3).T))
+
+    def run(self, label):
+        self.writeInputFiles()
+        self.unfold()
+        self.storeResult(label)
 
     def plotSpectra(self):
         plt.figure(0)
@@ -155,7 +168,6 @@ class BonnerSphereTools(object):
         plt.xscale('log')
         plt.yscale('log')
         plt.xlim(1E-8, 20)
-        plt.ylim(1E-20, 1E10)
         plt.xlabel('Energy ${}$'.format(self.dsErgUnits))
         plt.ylabel('Fluence')
         plt.legend()
