@@ -41,7 +41,7 @@ class BonnerSphereTools(object):
         self.routine = 'maxed'
 
     def makeStep(self, x, y):
-        # assert len(x) - 1== len(y)
+        assert len(x) - 1== len(y), '{} - 1 != {}'.format(len(x), len(y))
         Y = np.array([[yy, yy] for yy in np.array(y)]).flatten()
         X = np.array([[xx, xx] for xx in np.array(x)]).flatten()[1:-1]
         return X, Y
@@ -160,11 +160,14 @@ class BonnerSphereTools(object):
         self.unfold()
         self.storeResult(label)
 
-    def plotSpectra(self):
+    def plotSpectra(self, ds=True):
         plt.figure(0)
         for solution in self.solutions:
             x, y = self.makeStep(self.dsErgEdges, solution[1][1])
             plt.plot(x, y, label='{}'.format(solution[0]))
+        if ds:
+            x, y = self.makeStep(self.dsErgEdges, self.dS[1:])
+            plt.plot(x, y, label='Default Spectrum')
         plt.xscale('log')
         plt.yscale('log')
         plt.xlim(1E-8, 20)
